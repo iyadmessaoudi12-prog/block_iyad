@@ -24,12 +24,15 @@ jobs:
           sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good openjdk-17-jdk unzip
           pip install --upgrade pip setuptools "cython<3.0" buildozer
 
-      - name: Accept Android SDK Licenses & Build APK
+      - name: Accept All Android SDK Licenses
         run: |
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          buildozer android debug || true
-          yes | /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          echo -e "\n24833b298246556143fe1ee6dcd9d4a389d0b037\n89330172875f450846f319a273ef8979a172c9e1\nd56f5187479451eabf01fb78af6dfcb131a6481e" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+          echo -e "\nd97586ed510a9107da8230fa49a3f2c46d5c441c" > ~/.buildozer/android/platform/android-sdk/licenses/intel-android-sys-img-license
+
+      - name: Build APK with Buildozer
+        run: |
           buildozer -v android debug
 
       - name: Upload APK
