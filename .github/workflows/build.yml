@@ -26,7 +26,15 @@ jobs:
 
       - name: Build APK with Buildozer
         run: |
-          yes | buildozer -v android debug
+          expect -c '
+          set timeout -1
+          spawn buildozer -v android debug
+          expect {
+              "Accept? (y/N):" { send "y\r"; exp_continue }
+              "Press y to accept" { send "y\r"; exp_continue }
+              eof
+          }
+          '
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
