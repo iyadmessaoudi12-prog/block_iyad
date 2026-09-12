@@ -66,6 +66,6 @@ jobs:
         with:
           name: BLOCK_IYAD_APK
           path: |
-            bin/*.apk
+            path: bin/*
             .buildozer/android/platform/build-*/dists/*/build/outputs/apk/*/*/*.apk
           if-no-files-found: error
