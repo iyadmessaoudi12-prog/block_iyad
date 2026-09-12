@@ -21,15 +21,21 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good openjdk-17-jdk unzip
+          sudo apt-get install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good openjdk-17-jdk unzip wget
           pip install --upgrade pip setuptools "cython<3.0" buildozer
 
-      - name: Accept All Android SDK Licenses
+      - name: Setup Android SDK Tools & Accept Licenses
         run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-          echo -e "\n24833b298246556143fe1ee6dcd9d4a389d0b037\n89330172875f450846f319a273ef8979a172c9e1\nd56f5187479451eabf01fb78af6dfcb131a6481e" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-          echo -e "\nd97586ed510a9107da8230fa49a3f2c46d5c441c" > ~/.buildozer/android/platform/android-sdk/licenses/intel-android-sys-img-license
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O commandlinetools.zip
+          unzip -q commandlinetools.zip
+          mv cmdline-tools/* ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/ 2>/dev/null || true
+          rm -rf cmdline-tools commandlinetools.zip
+          
+          mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
+          ln -sf ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+          
+          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/home/runner/.buildozer/android/platform/android-sdk "build-tools;33.0.2" "platforms;android-33" || true
 
       - name: Build APK with Buildozer
         run: |
