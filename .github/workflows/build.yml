@@ -13,11 +13,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Build APK with Buildozer Action
-        uses: cls2/buildozer-action@v1
+      - name: Build APK inside Docker Container
+        uses: addnab/docker-run-action@v3
         with:
-          command: buildozer -v android debug
-          workdir: .
+          image: kivy/buildozer:latest
+          options: -v ${{ github.workspace }}:/home/user/hostroot
+          run: |
+            cd /home/user/hostroot
+            yes | buildozer --warn_on_root=0 -v android debug
 
       - name: Find and Upload APK
         uses: actions/upload-artifact@v4
