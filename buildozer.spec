@@ -7,7 +7,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,ttf,wav,ogg
 
 version = 0.1
-requirements = python3,hostpython3,pygame==2.1.0
+requirements = python3,kivy
 
 orientation = landscape
 fullscreen = 1
